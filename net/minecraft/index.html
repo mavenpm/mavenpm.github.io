@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Index of net/minecraft/</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #eee;
+    padding: 20px;
+  }
+  a {
+    color: #4caf50;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  li {
+    margin: 8px 0;
+  }
+</style>
+</head>
+<body>
+<h1>Index of net/minecraft/</h1>
+<ul id="listing"></ul>
+
+<script>
+(async function() {
+  const path = window.location.pathname;
+  document.querySelector('h1 span')?.remove();
+  const h1 = document.querySelector('h1');
+  h1.textContent = `Index of ${path}`;
+
+  try {
+    const res = await fetch('.');
+    const text = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+
+    // Get all anchor tags except 'index.html' and '../'
+    const links = [...doc.querySelectorAll('a')]
+      .filter(a => {
+        const href = a.getAttribute('href');
+        return href !== 'index.html' && href !== '../';
+      })
+      .map(a => ({
+        href: a.getAttribute('href'),
+        name: a.textContent.trim()
+      }));
+
+    const listing = document.getElementById('listing');
+    if (links.length === 0) {
+      listing.innerHTML = '<li><em>No files found</em></li>';
+      return;
+    }
+
+    links.forEach(({href, name}) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = href;
+      a.textContent = name;
+      li.appendChild(a);
+      listing.appendChild(li);
+    });
+  } catch (e) {
+    document.getElementById('listing').innerHTML = '<li>Error loading directory.</li>';
+    console.error(e);
+  }
+})();
+</script>
+</body>
+</html>
